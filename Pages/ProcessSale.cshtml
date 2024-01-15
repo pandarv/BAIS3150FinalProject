@@ -1,0 +1,377 @@
+﻿@page
+@using BAIS3150FinalProject.TechnicalServices
+@using System
+@model BAIS3150FinalProject.Pages.ProcessSaleModel
+@{
+    ViewData["Title"] = "Process Sale";
+}
+
+@section scriptContent
+{
+    <script>
+
+        function displayFieldsInStorage()
+        {
+            let saleItemArray = [];
+            let displaySaleItemHTML;
+            let subTotalCalculation = 0;
+            let gstCalculation = 0;
+            let saleTotalCalculation = 0;
+            const tbody = document.querySelector(".tbody")
+            const employeeName = document.querySelector(".saleperson");
+            const employeeID = document.querySelector(".processEmployeeID");
+
+            // Customer Info
+            const customerID = document.querySelector(".processCustomerID")
+            const customerName = document.querySelector(".customerName");
+            const customerAddress = document.querySelector(".customerAddress");
+            const customerCity = document.querySelector(".customerCity");
+            const customerProvince = document.querySelector(".customerProvince");
+            const customerPostalCode = document.querySelector(".customerPostalCode");
+
+            // Sub Total
+            const subTotal = document.querySelector(".subTotal");
+            const gst = document.querySelector(".gst");
+            const saleTotal = document.querySelector(".saleTotal");
+            const listSaleItem = document.querySelector(".listSaleItem");
+            const pocessSubTotal = document.querySelector(".peocessSubTotal");
+            const processGst = document.querySelector(".processGst");
+            const processSaleTotal = document.querySelector(".processSaleTotal");
+
+
+            if (localStorage.getItem("EmployeeInfo") !== null)
+            {
+                employeeName.innerText = JSON.parse(localStorage.getItem("EmployeeInfo")).EmployeeName
+
+                employeeID.value = JSON.parse(localStorage.getItem("EmployeeInfo")).EmployeeID
+            }
+
+            if (localStorage.getItem("CustomerInfo") !== null)
+            {
+                customerID.value = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerID;
+                customerName.innerText = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerName;
+                customerAddress.innerText = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerAddress;
+                customerCity.innerText = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerCity;
+                customerProvince.innerText = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerProvince;
+                customerPostalCode.innerText = JSON.parse(localStorage.getItem("CustomerInfo")).CustomerPostalCode;
+            }
+
+            if (localStorage.getItem("SaleItem") !== null)
+            {
+                saleItemArray = JSON.parse(localStorage.getItem("SaleItem"))
+
+                listSaleItem.value = localStorage.getItem("SaleItem");
+            }
+
+            if (saleItemArray.length > 0)
+            {
+                for (let index = 0; index < saleItemArray.length; index++)
+                {
+                    displaySaleItemHTML += `<tr><td>${saleItemArray[index].ItemCode}</td><td>${saleItemArray[index].Description}</td><td>${saleItemArray[index].UnitPrice}</td><td>${saleItemArray[index].Quantity}</td><td>${saleItemArray[index].ItemTotal}</td></tr>`;
+
+                    subTotalCalculation += Number(saleItemArray[index].ItemTotal)
+                }
+            }
+            gstCalculation = subTotalCalculation * 0.05
+            saleTotalCalculation = subTotalCalculation + gstCalculation
+
+            tbody.innerHTML = displaySaleItemHTML;
+            subTotal.innerHTML = subTotalCalculation == 0 ? "" : subTotalCalculation.toFixed(2);
+            pocessSubTotal.value = subTotal.innerText
+            gst.innerHTML = gstCalculation == 0 ? "" : gstCalculation.toFixed(2);
+            processGst.value = gst.innerText
+            saleTotal.innerText = saleTotalCalculation == 0 ? "" : (saleTotalCalculation).toFixed(2);
+            processSaleTotal.value = saleTotal.innerText
+        }
+
+        function employeeChangeHandler()
+        {
+            const employee = document.querySelector("#employee")
+            const employeeSectionError = document.querySelector('.selectionEMployeeError')
+
+            if (employee.value === "0")
+            {
+                employeeSectionError.innerText = "Please select an employee.";
+                employee.focus();
+            } else
+            {
+                for (let i = 0; i < employee.options.length; i++)
+                {
+                    if (employee.value === employee.options[i].value)
+                    {
+                        employeeSectionError.innerText = "";
+                        employee.options[i].innerText
+
+                        const employeeInformation = { EmployeeID: employee.value, EmployeeName: employee.options[i].innerText }
+                        localStorage.setItem("EmployeeInfo", JSON.stringify(employeeInformation))
+
+                    }
+                }
+            }
+        }
+
+        function customerCHangeHandler(aForm)
+        {
+            const phoneNumber = document.querySelector("#phoneNumber");
+            const employeeSectionError = document.querySelector('.selectionEMployeeError');
+
+            if (!/^[2-9]\d{9}$/.test(phoneNumber.value.trim()))
+            {
+                window.document.querySelector(".phoneNumberError").innerText = "Required - length of 10 - first digit should be 2 and above";
+                phoneNumber.focus();
+            } else
+            {
+                window.document.querySelector(".phoneNumberError").innerText = "";
+            }
+        }
+
+        function isSelectedCustomerValid(aForm)
+        {
+            let isValid = false;
+            const phoneNumber = aForm.PhoneNumber;
+            const employee = document.querySelector("#employee")
+            const employeeSectionError = document.querySelector('.selectionEMployeeError')
+
+            if (employee.value === "0")
+            {
+                employeeSectionError.innerText = "Please select an employee.";
+                employee.focus();
+            } else if (!/^[2-9]\d{9}$/.test(phoneNumber.value.trim()))
+            {
+                window.document.querySelector(".phoneNumberError").innerText = "Required - length of 10 - first digit should be 2 and above";
+                phoneNumber.focus();
+                isValid = false;
+            } else 
+            {
+                window.document.querySelector(".phoneNumberError").innerText = "";
+
+                isValid = true;
+            }
+            return isValid
+        }
+
+        function confirmInformation()
+        {
+            //Customer
+            const customerID = document.querySelector(".processCustomerID")
+            const customerName = document.querySelector(".customerName");
+            const customerAddress = document.querySelector(".customerAddress");
+            const customerCity = document.querySelector(".customerCity");
+            const customerProvince = document.querySelector(".customerProvince");
+            const customerPostalCode = document.querySelector(".customerPostalCode");
+
+            const customerInfo = { CustomerID: customerID.value, CustomerName: customerName.innerHTML, CustomerAddress: customerAddress.innerHTML, CustomerCity: customerCity.innerHTML, CustomerProvince: customerProvince.innerHTML, CustomerPostalCode: customerPostalCode.innerHTML };
+            localStorage.setItem("CustomerInfo", JSON.stringify(customerInfo))
+        }
+
+        function isFindItemFormValid(aForm)
+        {
+
+            let isValid = false;
+            const itemCode = aForm.ItemCode;
+
+            if (!/^[A-Z]\d{5}$/.test(itemCode.value))
+            {
+                window.document.querySelector(".itemCodeError").innerText = "Required - less than 6 characters - Pattern 'A99999'"
+                itemCode.focus();
+                isValid = false;
+            } else
+            {
+                window.document.querySelector(".itemCodeError").innerText = ""
+                isValid = true;
+            }
+            return isValid;
+        }
+
+        function itemChangeHandler(numberOfItem)
+        {
+            let numberOfItemOrder = Number(numberOfItem.value);
+            let itemTotalValue;
+
+            const stockQuantityError = document.querySelector(".stockQuantityError");
+            const itemTotal = document.querySelector(".itemTotal");
+
+            if (Number.isInteger(numberOfItemOrder))
+            {
+                itemTotalValue = @Model.UnitPrice * numberOfItem.value
+            } else
+            {
+                stockQuantityError.innerText = "Enter Integer value."
+            }
+            itemTotal.innerText = itemTotalValue.toFixed(2)
+        }
+
+        function addToCart(aForm)
+        {
+            const itemCode = document.querySelector(".itemCode")
+            const description = document.querySelector(".description")
+            const stockQuantity = document.querySelector(".stockQuantity")
+            const unitPrice = document.querySelector(".unitPrice")
+            const itemTotal = document.querySelector(".itemTotal")
+            const tbody = document.querySelector(".tbody")
+            const stockQuantityError = document.querySelector(".stockQuantityError");
+
+            let saleItem = [];
+            const singleSaleItem = { ItemCode: itemCode.innerHTML, Description: description.innerHTML, Quantity: stockQuantity.value, UnitPrice: unitPrice.innerHTML, ItemTotal: itemTotal.innerHTML };
+
+            if (localStorage.getItem("SaleItem") !== null)
+            {
+                saleItem = JSON.parse(localStorage.getItem("SaleItem"))
+            }
+            saleItem.push(singleSaleItem);
+            localStorage.setItem("SaleItem", JSON.stringify(saleItem))
+
+            aForm.submit();
+        }
+
+        function isProcessSaleFormValid(aForm)
+        {
+
+        }
+
+    </script>
+}
+
+@* action="~/ViewHTTPRequest" *@
+
+<div>
+    <h1>Process Sale</h1>
+
+    <h2>Work in progress...</h2>
+
+    <div>
+        <form onsubmit="return isSelectedCustomerValid(window.document.SelectCustomer);" name="SelectCustomer"
+            method="post">
+            <div>
+                <div>
+                    <h3>Employee: </h3>
+                    <div>
+                        <label for="employee">Select Employee</label>
+                        <select name="EmployeeID" id="employee" onchange="employeeChangeHandler()">
+                            <option value="0">Please select...</option>
+                            @foreach (var SingleEmployee in Model.Employees)
+                            {
+                                <option value="@SingleEmployee.EmployeeID">@SingleEmployee.EmployeeName</option>
+                            }
+                        </select>
+                    </div>
+                    <small class="selectionEMployeeError"></small>
+                    @Html.ValidationMessage("EmployeeID")
+                </div>
+                <div>
+                    <h3>Find Customer: </h3>
+                    <div>
+                        <div>
+                            <label for="phoneNumber">Customer Phone Number</label>
+                            <input type="text" name="PhoneNumber" id="phoneNumber"
+                                onchange="customerCHangeHandler(window.document.SelectCustomer)" />
+                            <small class="phoneNumberError"></small>
+                        </div>
+                        <div>
+                            <input type="submit" name="Submit" value="Find Customer" />
+                        </div>
+                    </div>
+                    @Model.CustomerMessage
+                    @Html.ValidationMessage("PhoneNumber")
+                </div>
+            </div>
+        </form>
+
+        <form action="">
+            <input type="button" value="Confirm Info" onclick="confirmInformation()">
+        </form>
+
+        <div>
+            <h3>Find Item: </h3>
+            <form action="" method="post" name="FindItem" class="processSale-flex"
+                onsubmit="return isFindItemFormValid(window.document.FindItem);">
+                <div>
+                    <div>
+                        <label for="itemCode">Item Code</label>
+                        <input type="text" id="itemCode" name="ItemCode" value="@Model.ItemCode">
+                        <small class="itemCodeError"></small>
+                    </div>
+                    <div>
+                        <input type="submit" name="Submit" value="Find Item">
+                    </div>
+                </div>
+            </form>
+            @Model.Message
+
+
+            @if (Model.Message != "Item Not Found" && Model.UnitPrice != 0)
+            {
+                <form name="AddToCart" class="addItemToCart">
+                    <span class="itemCode">@Model.ItemCode</span>
+                    <span class="description">@Model.Description</span>
+                    <input class="stockQuantity" name="NumberOfItem" type="number" min="1" max="@Model.StockQuantity"
+                        step="1" value="1" onchange="itemChangeHandler(this);">
+                    <span class="stockQuantityError"></span>
+                    <span class="unitPrice">@Model.UnitPrice</span>
+                    <span class="itemTotal">@Model.UnitPrice</span>
+                    <input type="button" value="Add To Cart" onclick="addToCart(window.document.AddToCart);" />
+                </form>
+            }
+
+        </div>
+
+
+        <form action="" method="post" name="ProcessSale"
+            onsubmit="return isProcessSaleFormValid(window.document.ProcessSale);">
+            <div class="flex">
+                <div class="sale-date flex">
+                    <h4>Sale Date: </h4>
+                    <p>@DateTime.Now.ToShortDateString()</p>
+                </div>
+                <div class="sale-person flex">
+                    <h4>Saleperson: </h4>
+                    <p class="saleperson">@Model.EmployeeName</p>
+                </div>
+            </div>
+            <div>
+                <p><strong>Customer Name: </strong><span class="customerName">@Model.FirstName @Model.LastName</span>
+                </p>
+                <p><strong>Address: </strong><span class="customerAddress">@Model.Address</span></p>
+                <p><strong>City: </strong><span class="customerCity">@Model.City</span></p>
+                <p><strong>Province: </strong><span class="customerProvince">@Model.Province</span></p>
+                <p><strong>Postal Code: </strong><span class="customerPostalCode">@Model.PostalCode</span></p>
+            </div>
+
+            <table class="process-sale-table">
+                <thead>
+                    <tr>
+                        <th>Item Code</th>
+                        <th>Description</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Item Total</th>
+                    </tr>
+                </thead>
+                <tbody class="tbody">
+                </tbody>
+            </table>
+            <div>
+                <p>Sub Total: <span class="subTotal"></span> </p>
+                <p>GST (5%): <span class="gst"></span> </p>
+                <p>Sale Total: <span class="saleTotal"></span> </p>
+            </div>
+
+            <div>
+                <input type="text" class="processEmployeeID" name="EmployeeID" value="@Model.EmployeeID" a />
+                <input type="text" class="processCustomerID" name="CustomerID" value="@Model.CustomerID" />
+                <input type="text" name="ListSaleItem" class="listSaleItem">
+                <input type="text" name="SaleDate" value="@DateTime.Now" />
+                <input type="text" name="SubTotal" class="peocessSubTotal" />
+                <input type="text" name="GST" class="processGst" />
+                <input type="text" name="SaleTotal" class="processSaleTotal" />
+
+                <input type="submit" name="Submit" value="Process Sale" />
+            </div>
+            <script type="text/javascript">
+                displayFieldsInStorage();
+            </script>
+
+        </form>
+    </div>
+
+</div>

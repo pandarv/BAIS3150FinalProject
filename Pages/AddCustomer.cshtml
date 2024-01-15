@@ -1,0 +1,161 @@
+﻿@page
+@model AddCustomerModel
+@{
+    ViewData["Title"] = "Add Customer";
+}
+
+@section scriptContent
+{
+    <script>
+
+        function isAddCustomerFormValid(aForm) {
+            let isValid = false;
+            const customerID = aForm.CustomerID;
+            const firstName = aForm.FirstName;
+            const lastName = aForm.LastName;
+            const address = aForm.Address;
+            const phoneNumber = aForm.PhoneNumber;
+            const city = aForm.City;
+            const province = aForm.Province;
+            const postalCode = aForm.PostalCode;
+            const isDeleted = aForm.IsDeleted;
+
+            while (!isValid) {
+            
+                if (!/^[a-zA-Z]{1,50}$/.test(firstName.value.trim())) {
+                    window.document.querySelector(".firstNameError").innerText = "Required - less than 50 characters";
+                    firstName.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".firstNameError").innerText = ""
+                }
+                
+                if (!/^[a-zA-Z]{1,50}$/.test(lastName.value.trim())) {
+                    window.document.querySelector(".lastNameError").innerText = "Required - less than 50 characters";
+                    lastName.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".lastNameError").innerText = ""
+                }
+
+                if (!/^[a-zA-Z0-9\s.,#-]{1,255}$/.test(address.value.trim())) {
+                    window.document.querySelector(".addressError").innerText = "Required - less than 255 characters";
+                    address.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".addressError").innerText = "";
+                }
+                
+                if (!/^[2-9]\d{9}$/.test(phoneNumber.value.trim())) {
+                    window.document.querySelector(".phoneNumberError").innerText = "Required - length of 10 - first digit should be 2 and above";
+                    phoneNumber.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".phoneNumberError").innerText = "";
+                }
+                
+                if (!/^[a-zA-Z]+(\s[a-zA-Z]+){0,49}$/.test(city.value.trim())) {
+                    window.document.querySelector(".cityError").innerText = "Required - length of 50";
+                    city.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".cityError").innerText = "";
+                }
+                
+                if (!/^[a-zA-Z]+(\s[a-zA-Z]+){0,49}$/.test(province.value.trim())) {
+                    window.document.querySelector(".provinceError").innerText = "Required - length of 50";
+                    province.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".provinceError").innerText = "";
+                }
+
+                if (!/^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(postalCode.value.trim())) {
+                    window.document.querySelector(".postalCodeError").innerText = "Pattern 'X9X9X9'";
+                    postalCode.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".postalCodeError").innerText = "";
+                }
+
+                isValid = true;
+            }
+            return isValid;
+        }
+
+
+        function getLength(inputValue) {
+            return inputValue.value.trim().length;
+        }
+    </script>
+}
+
+
+<div>
+    <h1>Add Customer Form</h1>
+
+    <div>
+        <form action="" method="post" name="AddCustomer" onsubmit="return isAddCustomerFormValid(window.document.AddCustomer);">
+            @* <div> *@
+            @*     <label for="customerID">CustomerID</label> *@
+            @*     <input type="text" id="customerID" name="CustomerID" value="@Model.CustomerID"> *@
+            @*     <small class="customerIDError"></small> *@
+            @* </div> *@
+            <div>
+                <label for="firstName">First Name</label>
+                <input type="text" name="FirstName" id="firstName" value="@Model.FirstName">
+                <small class="firstNameError"></small>
+            </div>
+            <div>
+                <label for="lastName">Last Name</label>
+                <input type="text" name="LastName" id="lastName" value="@Model.LastName">
+                <small class="lastNameError"></small>
+            </div>
+            <div>
+                <label for="address">Address</label>
+                <input type="text" name="Address" id="address" value="@Model.Address">
+                <small class="addressError"></small>
+            </div>
+            <div>
+                <label for="phoneNumber">Phone Number</label>
+                <input type="text" name="PhoneNumber" id="phoneNumber" value="@Model.PhoneNumber">
+                <small class="phoneNumberError"></small>
+            </div>
+            <div>
+                <label for="city">City</label>
+                <input type="text" name="City" id="city" value="@Model.City">
+                <small class="cityError"></small>
+            </div>
+            <div>
+                <label for="province">Province</label>
+                <input type="text" name="Province" id="province" value="@Model.Province">
+                <small class="provinceError"></small>
+            </div>
+            <div>
+                <label for="postalCode">Postal Code</label>
+                <input type="text" name="PostalCode" id="postalCode" value="@Model.PostalCode">
+                <small class="postalCodeError"></small>
+            </div>
+            <div>
+                <label for="isDeleted">Mark Deleted</label>
+                <div class="flex-mark-deleted">
+                    <div class="flex">
+                        <label for="isDeleted1">Yes</label>
+                        <input type="radio" name="IsDeleted" id="isDeleted1" value="true"/>
+                    </div>
+                    <div class="flex">
+                        <label for="isDeleted2">No</label>
+                        <input type="radio" name="IsDeleted" id="isDeleted2" value="false" checked/>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input type="submit" value="Submit" name="Submit">
+            </div>
+        </form>
+
+        <div class="center-container">
+            @Model.Message
+        </div>
+    </div>
+</div>

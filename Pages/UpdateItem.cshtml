@@ -1,0 +1,142 @@
+﻿@page
+@model BAIS3150FinalProject.Pages.UpdateItemModel
+@{
+    ViewData["Title"] = "Update Item";
+}
+
+@section scriptContent
+    {
+    <script>
+
+        function isFindItemFormValid(aForm) {
+
+            let isValid = false;
+            const itemCode = aForm.ItemCode;
+
+            while (!isValid) {
+
+                if (getLength(itemCode) == 0 || getLength(itemCode) > 6 || !/^[A-Z]\d{5}$/.test(itemCode.value)) {
+                    window.document.querySelector(".itemCodeError").innerText = "Required - less than 6 characters - Pattern 'A99999'"
+                    itemCode.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".itemCodeError").innerText = ""
+                }
+
+                isValid = true;
+            }
+
+            return isValid;
+
+        }
+
+        function isUpdateItemFormValid(aForm) {
+            let isValid = false;
+            const description = aForm.Description;
+            const unitPrice = aForm.UnitPrice;
+            const stockQuantity = aForm.StockQuantity;
+            const isDeleted = aForm.IsDeleted;
+
+            while (!isValid) {
+
+                if (getLength(description) == 0 || getLength(description) > 255) {
+                    window.document.querySelector(".descriptionError").innerText = "Required - less than 255 characters";
+                    description.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".descriptionError").innerText = "";
+                }
+
+                if (!unitPrice.value || !/^\d+(\.\d{1,2})?$/.test(unitPrice.value)) {
+                    window.document.querySelector(".unitPriceError").innerText = "Required - Pattern '999.99'";
+                    unitPrice.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".unitPriceError").innerText = "";
+                }
+
+                if (!stockQuantity.value || !/^(0|[1-9]\d*)$/.test(stockQuantity.value)) {
+                    window.document.querySelector(".stockQuantityError").innerText = "0 and above";
+                    stockQuantity.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".stockQuantityError").innerText = ""
+                }
+
+
+                isValid = true;
+            }
+            return isValid;
+        }
+
+
+        function getLength(inputValue) {
+            return inputValue.value.trim().length;
+        }
+    </script>
+}
+
+<div>
+    <h1>Update Item Form</h1>
+
+    <div>
+        <h3>Find Item: </h3>
+        <form action="" method="post" name="FindItem" onsubmit="return isFindItemFormValid(window.document.FindItem);">
+            <div>
+                <label for="itemCode">Item Code</label>
+                <input type="text" id="itemCode" name="ItemCode" value="@Model.ItemCode">
+                <small class="itemCodeError"></small>
+            </div>
+            <input type="submit" name="Submit" value="Find Item">
+        </form>
+
+    </div>
+
+    <div>
+        <h3>Update Item: </h3>
+        <form action="" method="post" name="UpdateItem" onsubmit="return isUpdateItemFormValid(window.document.UpdateItem);">
+            <div>
+                <input type="hidden" id="itemCode" name="ItemCode" value="@Model.ItemCode">
+                @* <small class="itemCodeError"></small> *@
+            </div>
+            <div>
+                <label for="description">Description</label>
+                <input type="text" name="Description" id="description" value="@Model.Description">
+                <small class="descriptionError"></small>
+            </div>
+            <div>
+                <label for="unitPrice">Unit Price</label>
+                <input type="text" name="UnitPrice" id="unitPrice" value="@Model.UnitPrice">
+                <small class="unitPriceError"></small>
+            </div>
+            <div>
+                <label for="stockQuantity">Stock Quantity</label>
+                <input type="text" name="StockQuantity" id="stockQuantity" value="@Model.StockQuantity">
+                <small class="stockQuantityError"></small>
+            </div>
+            <div>
+                <label for="isDeleted">Mark Deleted</label>
+                <div class="flex-mark-deleted">
+                    <div class="flex">
+                    <label for="isDeleted1">Yes</label>
+                        <input type="radio" name="IsDeleted" id="isDeleted1" value="true" checked="@(Model.IsDeleted == true)"/>
+                    </div>
+                    
+                    <div class="flex">
+                    <label for="isDeleted2">No</label>
+                        <input type="radio" name="IsDeleted" id="isDeleted2" value="false" checked="@(Model.IsDeleted == false)"/>
+                    </div>
+                    
+                        
+                </div>
+            </div>
+            <div>
+                <input type="submit" value="Update Item" name="Submit">
+            </div>
+        </form>
+
+        <div class="center-container">
+            @Model.Message
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-with" charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <!-- Address Bar/Browser Tab Favourit Icon - /wwwroot/images -->
+    @* <link rel="icon" href="~/Images/BAISTFavoritesIcon.ico" type="image/x-icon" /> *@
+    <!-- /wwwroot/css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;400&display=swap" rel="stylesheet">
+    <link href="~/css/stylesheet.css" rel="stylesheet" />
+    <script type="text/javascript"></script>
+    @RenderSection("scriptContent", required: false)
+</head>
+
+<body>
+    <header>
+        <h1><a href="~/Index">BAIS3150FinalProject</a></h1>
+        <nav>
+            <ul>
+                <li><a href="~/Index">Home</a></li>
+                <li><a href="~/AddItem">Add Item</a></li>
+                <li><a href="~/UpdateItem">Update Item</a></li>
+                <li><a href="~/DeleteItem">Delete Item</a></li>
+                <li><a href="~/AddCustomer">Add Customer</a></li>
+                <li><a href="~/UpdateCustomer">Update Customer</a></li>
+                <li><a href="~/DeleteCustomer">Delete Customer</a></li>
+                <li><a href="~/ProcessSale">Process Sale</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <footer>
+        <small>&copy; Copyright 2020 - @DateTime.Now.Year </small>
+    </footer>
+    @* <script src="~/libraries/js/validation.js"></script> *@
+</body>
+
+</html>

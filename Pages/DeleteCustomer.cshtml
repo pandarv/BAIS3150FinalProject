@@ -1,0 +1,63 @@
+﻿@page
+@model BAIS3150FinalProject.Pages.DeleteCustomerModel
+@{
+    ViewData["Title"] = "Delete Customer";
+}
+
+@section scriptContent
+{
+    <script>
+        function isFindCustomerFormValid(aForm) {
+            
+            let isValid = false;
+            const customerID = aForm.CustomerID;
+    
+            while (!isValid) {
+    
+                if (!/^[1-9]\d{3,}$/.test(customerID.value.trim())) {
+                    window.document.querySelector(".customerIDError").innerText = "CustomerID is Required and must be more than or equal to 1000"
+                    customerID.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".customerIDError").innerText = ""
+                }
+    
+                isValid = true;
+            }
+    
+            return isValid;
+    
+        }
+        
+        
+    </script>
+}
+
+<div>
+    <h1>Delete Customer Form</h1>
+    <div>
+        <h3>Find Customer: </h3>
+        <form action="" method="post" name="FindCustomer" onsubmit="return isFindCustomerFormValid(window.document.FindCustomer);">
+            <div>
+                <label for="customerID">CustomerID</label>
+                <input type="text" id="customerID" name="CustomerID" value="@Model.CustomerID">
+                <small class="customerIDError"></small>
+            </div>
+            <input type="submit" name="Submit" value="Find Customer">
+        </form>
+
+    </div>
+    
+    <div>
+        <h3>Delete Customer: </h3>
+        <form action="" method="post" name="DeleteCustomer" onsubmit="return isDeleteCustomerFormValid(window.document.DeleteCustomer);">
+            <div>
+                <input type="hidden" id="customerID" name="CustomerID" value="@Model.CustomerID">
+                <small class="customerIDError"></small>
+            </div>
+            <input type="submit" name="Submit" value="Delete Customer">
+        </form>
+        <small class="customerIDError">@Model.Message</small>
+
+    </div>
+</div>

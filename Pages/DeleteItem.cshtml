@@ -1,0 +1,65 @@
+﻿@page
+@model BAIS3150FinalProject.Pages.DeleteItemModel
+@{
+    ViewData["Title"] = "Delete Item";
+}
+
+@section scriptContent
+    {
+    <script>
+
+        function isFindItemFormValid(aForm) {
+
+            let isValid = false;
+            const itemCode = aForm.ItemCode;
+
+            while (!isValid) {
+
+                if (!/^[A-Z]\d{5}$/.test(itemCode.value)) {
+                    window.document.querySelector(".itemCodeError").innerText = "Required - less than 6 characters - Pattern 'A99999'"
+                    itemCode.focus();
+                    break;
+                } else {
+                    window.document.querySelector(".itemCodeError").innerText = ""
+                }
+
+                isValid = true;
+            }
+
+            return isValid;
+
+        }
+
+        function getLength(inputValue) {
+            return inputValue.value.trim().length;
+        }
+    </script>
+}
+
+<div>
+    <h1>Delete Item Form</h1>
+
+    <div>
+        <h3>Find Item: </h3>
+        <form action="" method="post" name="FindItem" onsubmit="return isFindItemFormValid(window.document.FindItem);">
+            <div>
+                <label for="itemCode">Item Code</label>
+                <input type="text" id="itemCode" name="ItemCode" value="@Model.ItemCode">
+                <small class="itemCodeError"></small>
+            </div>
+            <input type="submit" name="Submit" value="Find Item">
+        </form>
+    </div>
+
+    <div>
+        <h3>Delete Item: <small>@Model.Message</small></h3>
+        <form action="" method="post" name="DeleteItem" onsubmit="return isDeleteItemFormValid(window.document.DeleteItem);">
+            <div>
+                <input type="hidden" id="itemCode" name="ItemCode" value="@Model.ItemCode">
+                <small class="itemCodeError"></small>
+            </div>
+            <input type="submit" name="Submit" value="Delete Item">
+        </form>
+
+    </div>
+</div>
